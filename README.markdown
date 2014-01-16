@@ -135,9 +135,9 @@ follows:
     object always overrides dom_id recognition.**
 
 -   REST in Place supports multiple form types. The default type is a input
-    field, a textarea is also supported. To select a form type use the
-    `data-formtype` attribute in the element and set it to the name of your
-    formtype ( `input`, or `textarea` ).
+    field, a textarea is also supported, as well as Trumbowyg. To select a form 
+    type use the `data-formtype` attribute in the element and set it to the name
+    of your formtype ( `input`, `textarea`, or `trumbowyg` ).
     
     To write your own form types, just extend the `RestInPlace.forms` object
     and select your new form type throught the `data-formtype` attribute.
