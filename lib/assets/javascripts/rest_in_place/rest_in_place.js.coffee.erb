@@ -205,22 +205,22 @@ RestInPlaceEditor.forms =
     getValue : ->
       @$element.find("textarea").val()
 
-  "trumbowyg" :
-    activateForm : ->
-      domid = "#" + @$element[0].id
-      @$element.trumbowyg :
-        autogrow: true
-      @$element[0].focus()
-      @$element.keyup (e) =>
-        if e.keyCode == ESC_KEY
-          $(domid).trumbowyg("destroy")
-          abort()
-      @$element.focusOut =>
-        update()
-        $element.trumbowyg("destroy")
+"trumbowyg" :
+  activateForm : ->
+    domid = "#" + @$element[0].id
+    @$element.trumbowyg
+      autogrow: true
+    @$element[0].focus()
+    @$element.keyup (e) =>
+      if e.keyCode == ESC_KEY
+        $(domid).trumbowyg("destroy")
+        abort()
+    @$element.focusOut =>
+      update()
+      $element.trumbowyg("destroy")
 
-    getValue : ->
-      @$element[0].innerHTML
+  getValue : ->
+    @$element[0].innerHTML
 
 # ------------------
 #
