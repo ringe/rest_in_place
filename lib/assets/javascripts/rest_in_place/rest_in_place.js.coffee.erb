@@ -8,11 +8,11 @@ class RestInPlaceEditor
     @initOptions()
     @bindForm()
     @createClickHandler()
-    
+
     @$element.click(@clickHandler)
-  
+
   # ## Public interface functions ############################################
-  
+
   # Toggle the element associated with this editor from normal to a form field  
   activate : ->
     @oldValue = @$element.html()
@@ -21,7 +21,7 @@ class RestInPlaceEditor
     @$element.unbind('click', @clickHandler)
     @activateForm()
     @$element.trigger('ready.rest-in-place')
-  
+
   # Restore the element to its default state
   abort : ->
     @$element.trigger('abort.rest-in-place')
@@ -29,7 +29,7 @@ class RestInPlaceEditor
       .html(@oldValue)
       .removeClass('rip-active')
       .click(@clickHandler)
-  
+
   # Take the changes a user has made and send them to the server.
   # If the server accepted the request but does not send back a
   # parseable answer, a second request is initiated to retrieve the updated
@@ -39,36 +39,36 @@ class RestInPlaceEditor
     updateRequest = @ajax
       type : "post"
       data : @requestData()
-      
+
     updateRequest.done (data) =>
       if data
         @loadSuccessCallback(data)
       else
         @loadViaGET()
-        
+
     updateRequest.fail (jqXHR, textStatus) =>
       if (jqXHR.status == 200 && textStatus == "parsererror")
         @loadViaGET()
       else
         @$element.trigger('failure.rest-in-place')
         @abort()
-        
+
     @$element.html("saving...")
-  
+
   loadViaGET : ->
     showRequest = @ajax()
     showRequest.done (data) => @loadSuccessCallback(data)
     showRequest.fail => @$element.trigger('failure.rest-in-place')
-  
+
   # ## Implementation Methods
   #
   # These are not implemented in RestInPlaceEditor. Instead, different form
   # types implement this method (and some others). See [Forms](#forms)
-  
+
   # Turns the elements HTML into a form. 
   activateForm : ->
     alert("The form was not properly initialized. activateForm is unbound")
-  
+
   # When the element is active (it is a form), thtis method returns the value
   # that should be sent to the server.
   getValue : ->
@@ -113,19 +113,19 @@ class RestInPlaceEditor
     @formType      = @$element.attr("data-formtype")  || @formType || "input"
     @objectName    = @$element.attr("data-object")    || @objectName
     @attributeName = @$element.attr("data-attribute") || @attributeName
-    
+
   # Overwrites formtype specific method implementations during initialization
   bindForm : ->
     @activateForm = RestInPlaceEditor.forms[@formType].activateForm
     @getValue     = RestInPlaceEditor.forms[@formType].getValue
-  
+
   # Generate the data that is sent in the POST request
   requestData : ->
     data = @getEncodedTokenAuthenticationParams()
     data["_method"] = 'put'
     data["#{@objectName}[#{@attributeName}]"] = @getValue()
     data
-  
+
   # Extract CSRF token from metatags
   getEncodedTokenAuthenticationParams : ->
     data = {}
@@ -146,17 +146,17 @@ class RestInPlaceEditor
       data[@objectName][@attributeName]
     else
       data[@attributeName]      
-  
+
   # ## Handlers ##############################################################
-  
+
   # Handles the successful response from the server
   loadSuccessCallback : (data) ->
     @$element.text(@extractAttributeFromData(data))
     @$element.click(@clickHandler)
     @$element.removeClass('rip-active')
     @$element.trigger('success.rest-in-place', data)
-    
-  
+
+
   # Creates a clickhandler for the current instance of RestInPlaceEditor, that
   # has its this pointer permanently bound to the editor instance.
   createClickHandler : ->
@@ -186,10 +186,10 @@ RestInPlaceEditor.forms =
       @$element.find("input").keyup (e) =>
         @abort() if e.keyCode == ESC_KEY
       @$element.find("input").blur => @abort()
-    
+
     getValue : ->
       @$element.find("input").val()
-  
+
   "textarea" :
     activateForm : ->
       value = $.trim(@$element.html())
@@ -205,22 +205,22 @@ RestInPlaceEditor.forms =
     getValue : ->
       @$element.find("textarea").val()
 
-"trumbowyg" :
-  activateForm : ->
-    domid = "#" + @$element[0].id
-    @$element.trumbowyg
-      autogrow: true
-    @$element[0].focus()
-    @$element.keyup (e) =>
-      if e.keyCode == ESC_KEY
-        $(domid).trumbowyg("destroy")
-        abort()
-    @$element.focusOut =>
-      update()
-      $element.trumbowyg("destroy")
+  "trumbowyg" :
+    activateForm : ->
+      domid = "#" + @$element[0].id
+      @$element.trumbowyg
+        autogrow: true
+      @$element[0].focus()
+      @$element.keyup (e) =>
+        if e.keyCode == ESC_KEY
+          @$element.trumbowyg("destroy")
+          @abort()
+      @$element.focusOut =>
+        @update()
+        @$element.trumbowyg("destroy")
 
-  getValue : ->
-    @$element[0].innerHTML
+    getValue : ->
+      @$element.html()
 
 # ------------------
 #
