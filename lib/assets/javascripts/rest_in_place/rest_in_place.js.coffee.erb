@@ -151,7 +151,7 @@ class RestInPlaceEditor
 
   # Handles the successful response from the server
   loadSuccessCallback : (data) ->
-    @$element.text(@extractAttributeFromData(data))
+    @$element.html(@extractAttributeFromData(data))
     @$element.click(@clickHandler)
     @$element.removeClass('rip-active')
     @$element.trigger('success.rest-in-place', data)
@@ -207,7 +207,6 @@ RestInPlaceEditor.forms =
 
   "trumbowyg" :
     activateForm : ->
-      domid = "#" + @$element[0].id
       @$element.trumbowyg
         autogrow: true
       @$element[0].focus()
@@ -215,7 +214,7 @@ RestInPlaceEditor.forms =
         if e.keyCode == ESC_KEY
           @$element.trumbowyg("destroy")
           @abort()
-      @$element.focusOut =>
+      @$element.focusout =>
         @update()
         @$element.trumbowyg("destroy")
 
