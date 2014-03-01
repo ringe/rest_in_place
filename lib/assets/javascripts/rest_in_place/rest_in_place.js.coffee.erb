@@ -208,7 +208,15 @@ RestInPlaceEditor.forms =
   "trumbowyg" :
     activateForm : ->
       @$element.trumbowyg
-        autogrow: true
+        autogrow: true,
+        semantic: true,
+        fullscreenable: false,
+        btns: ['formatting',
+          '|', ['bold', 'italic', 'underline', 'strikethrough'],
+          '|', ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
+          '|', ['unorderedList', 'orderedList'],
+          '|', 'insertHorizontalRule'
+        ]
       @$element[0].focus()
       @$element.keyup (e) =>
         if e.keyCode == ESC_KEY
